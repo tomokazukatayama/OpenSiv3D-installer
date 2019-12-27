@@ -1,5 +1,0 @@
-
-
-Write-Output('Hello, world!')
-
-
