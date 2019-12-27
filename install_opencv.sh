@@ -6,8 +6,17 @@
 #                       SCRIPT OPTIONS                                 |
 # ---------------------------------------------------------------------|
 OPENCV_VERSION='4.2.0'       # Version to be installed
-OPENCV_CONTRIB='YES'          # Install OpenCV's extra modules (YES/NO)
+OPENCV_CONTRIB='NO'          # Install OpenCV's extra modules (YES/NO)
 # -------------------------------------------------------------------- |
+echo ${OPENCV_VERSION}
+echo ${OPENCV_VERSION}
+echo ${OPENCV_VERSION}
+echo ${OPENCV_VERSION}
+echo ${OPENCV_VERSION}
+echo ${OPENCV_VERSION}
+echo ${OPENCV_VERSION}
+echo ${OPENCV_VERSION}
+echo ${OPENCV_VERSION}
 
 # |          THIS SCRIPT IS TESTED CORRECTLY ON          |
 # |------------------------------------------------------|
@@ -27,10 +36,6 @@ OPENCV_CONTRIB='YES'          # Install OpenCV's extra modules (YES/NO)
 
 # 1. KEEP UBUNTU OR DEBIAN UP TO DATE
 
-
-echo -e "\e[5;33;45m Install OpenCV4 \e[0m"
-echo -e "\e[5;33;45m it will be install OpenCV version : echo ${OPENCV_VERSION}\e[0m"
-
 sudo apt-get -y update
 # sudo apt-get -y upgrade       # Uncomment to install new versions of packages currently installed
 # sudo apt-get -y dist-upgrade  # Uncomment to handle changing dependencies with new vers. of pack.
@@ -39,26 +44,40 @@ sudo apt-get -y update
 
 # 2. INSTALL THE DEPENDENCIES
 
-
 # Build tools:
-sudo apt-get install -y build-essential cmake \
-                        qt5-default libvtk6-dev \ 
-                        zlib1g-dev libjpeg-dev libwebp-dev libpng-dev libtiff5-dev \
-                        libopenexr-dev libgdal-dev \
-                        libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev \
+sudo apt-get install -y build-essential cmake
+
+# GUI (if you want GTK, change 'qt5-default' to 'libgtkglext1-dev' and remove '-DWITH_QT=ON'):
+sudo apt-get install -y qt5-default libvtk6-dev
+
+# Media I/O:
+sudo apt-get install -y zlib1g-dev libjpeg-dev libwebp-dev libpng-dev libtiff5-dev libjasper-dev \
+                        libopenexr-dev libgdal-dev
+
+# Video I/O:
+sudo apt-get install -y libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev \
                         libtheora-dev libvorbis-dev libxvidcore-dev libx264-dev yasm \
-                        libopencore-amrnb-dev libopencore-amrwb-dev libv4l-dev libxine2-dev \
-                        libtbb-dev libeigen3-dev \
-                        python-dev  python-tk  pylint  python-numpy  \
-                        python3-dev python3-tk pylint3 python3-numpy flake8 \
-                        ant default-jdk doxygen unzip wget
+                        libopencore-amrnb-dev libopencore-amrwb-dev libv4l-dev libxine2-dev
+
+# Parallelism and linear algebra libraries:
+sudo apt-get install -y libtbb-dev libeigen3-dev
+
+# Python:
+sudo apt-get install -y python-dev  python-tk  pylint  python-numpy  \
+                        python3-dev python3-tk pylint3 python3-numpy flake8
+
+# Java:
+sudo apt-get install -y ant default-jdk
+
+# Documentation and other:
+sudo apt-get install -y doxygen unzip wget
 
 
 # 3. INSTALL THE LIBRARY
 
 wget https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip
-unzip -uq ${OPENCV_VERSION}.zip && rm ${OPENCV_VERSION}.zip
-mv -ur opencv-${OPENCV_VERSION} OpenCV
+unzip ${OPENCV_VERSION}.zip && rm ${OPENCV_VERSION}.zip
+mv opencv-${OPENCV_VERSION} OpenCV
 
 if [ $OPENCV_CONTRIB = 'YES' ]; then
   wget https://github.com/opencv/opencv_contrib/archive/${OPENCV_VERSION}.zip
@@ -67,8 +86,7 @@ if [ $OPENCV_CONTRIB = 'YES' ]; then
   mv opencv_contrib OpenCV
 fi
 
-cd OpenCV && mkdir -p build 
-cd build
+cd OpenCV && mkdir build && cd build
 
 if [ $OPENCV_CONTRIB = 'NO' ]; then
 cmake -DWITH_QT=ON -DWITH_OPENGL=ON -DFORCE_VTK=ON -DWITH_TBB=ON -DWITH_GDAL=ON \
@@ -81,7 +99,7 @@ cmake -DWITH_QT=ON -DWITH_OPENGL=ON -DFORCE_VTK=ON -DWITH_TBB=ON -DWITH_GDAL=ON 
       -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib/modules ..
 fi
 
-make -j10
+make -j4
 sudo make install
 sudo ldconfig
 
