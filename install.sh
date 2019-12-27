@@ -16,7 +16,17 @@ libglib2.0-dev libudev-dev libc6 libavcodec-dev libavformat-dev\
 libavutil-dev libswresample-dev libturbojpeg0-dev
 
 ##########################################################
-bash ./install-jasper.sh
+cd ~
+echo -e "\e[5;33;45m Install JasPer(Jpeg2000 Library) \e[0m"
+wget --no-clobber https://github.com/mdadams/jasper/archive/master.zip
+unzip -u master.zip
+cd jasper-master
+mkdir build-jasper
+cd build-jasper
+cmake -G "Unix Makefiles" .. -DJAS_ENABLE_DOC=NO
+make
+sudo make install
+###########################################################
 OPENCV_VERSION='4.2.0'
 OPENCV_CONTRIB='YES'
 echo -e "\e[5;33;45m Install OpenCV4 \e[0m"
@@ -51,18 +61,20 @@ cd build
 
 if [ $OPENCV_CONTRIB = 'NO' ]; then
 cmake -DWITH_QT=ON -DWITH_OPENGL=ON -DFORCE_VTK=ON -DWITH_TBB=ON -DWITH_GDAL=ON \
-      -DWITH_XINE=ON -DENABLE_PRECOMPILED_HEADERS=OFF ..
+      -DWITH_XINE=ON -DENABLE_PRECOMPILED_HEADERS=OFF .. -DOPENCV_GENERATE_PKGCONFIG=ON
 fi
 
 if [ $OPENCV_CONTRIB = 'YES' ]; then
 cmake -DWITH_QT=ON -DWITH_OPENGL=ON -DFORCE_VTK=ON -DWITH_TBB=ON -DWITH_GDAL=ON \
       -DWITH_XINE=ON -DENABLE_PRECOMPILED_HEADERS=OFF \
-      -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib/modules ..
+      -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib/modules .. -DOPENCV_GENERATE_PKGCONFIG=ON
 fi
 
-#make -j10
-#sudo make install
-#sudo ldconfig
+pkg-config --cflags --libs opencv4
+make -j10
+sudo make install
+sudo ldconfig
+
 pwd
 
 ###############Install AngelScript##########################
