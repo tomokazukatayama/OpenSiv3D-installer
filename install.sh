@@ -3,11 +3,14 @@
 #########Configure Version Directory etc...###############
 BUILDDIR="OpenSiv3D-installer"
 ANGELSCRIPT_VERSION="2.34.0"
+MULTICORE="10"
+OPENCV_VERSION='4.2.0'
+OPENCV_CONTRIB='YES'
 ##########################################################
 
 ##################Installing Dependancies##################
 echo -e "\e[5;33;45m Install OpenSiv3D dependancies \e[0m"
-sudo apt install libxi-dev libxcursor-dev libxrandr-dev \
+sudo apt install -y -qq libxi-dev libxcursor-dev libxrandr-dev \
 libglu1-mesa libgl1-mesa-dev libglu1-mesa-dev libglfw3-dev \
 libpng-dev libjpeg-turbo8-dev libgif-dev libwebp-dev \
 libfreetype6-dev libharfbuzz-dev libharfbuzz-bin libopenal-dev \
@@ -27,13 +30,13 @@ cmake -G "Unix Makefiles" .. -DJAS_ENABLE_DOC=NO
 make
 sudo make install
 ###########################################################
-OPENCV_VERSION='4.2.0'
-OPENCV_CONTRIB='YES'
+cd ~
+cd $BUILDDIR
 echo -e "\e[5;33;45m Install OpenCV4 \e[0m"
 echo -e "\e[5;33;45m it will be install OpenCV version : echo ${OPENCV_VERSION}\e[0m"
 
-sudo apt-get -y update
-sudo apt-get install -y build-essential cmake \
+sudo apt-get -y update -qq
+sudo apt-get install -y -qq build-essential cmake \
                         qt5-default libvtk6-dev \
                         zlib1g-dev libjpeg-dev libwebp-dev libpng-dev libtiff5-dev \
                         libopenexr-dev libgdal-dev \
@@ -46,12 +49,12 @@ sudo apt-get install -y build-essential cmake \
                         ant default-jdk doxygen unzip wget
 
 wget --no-clobber https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip
-unzip -uq ${OPENCV_VERSION}.zip && rm ${OPENCV_VERSION}.zip
-mv -ur opencv-${OPENCV_VERSION} OpenCV
+unzip -uq ${OPENCV_VERSION}.zip 
+mv -u opencv-${OPENCV_VERSION} OpenCV
 
 if [ $OPENCV_CONTRIB = 'YES' ]; then
   wget --no-clobber https://github.com/opencv/opencv_contrib/archive/${OPENCV_VERSION}.zip
-  unzip -uq ${OPENCV_VERSION}.zip && rm ${OPENCV_VERSION}.zip
+  unzip -uq ${OPENCV_VERSION}.zip 
   mv -u opencv_contrib-${OPENCV_VERSION} opencv_contrib
   mv -u opencv_contrib OpenCV
 fi
@@ -70,8 +73,9 @@ cmake -DWITH_QT=ON -DWITH_OPENGL=ON -DFORCE_VTK=ON -DWITH_TBB=ON -DWITH_GDAL=ON 
       -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib/modules .. -DOPENCV_GENERATE_PKGCONFIG=ON
 fi
 
+export PKG_CONFIG_PATH=`pwd`/unix-install:$PKG_CONFIG=PATH
 pkg-config --cflags --libs opencv4
-make -j10
+make -j $MULTICORE
 sudo make install
 sudo ldconfig
 
@@ -102,7 +106,7 @@ cd Linux
 mkdir -p build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles" ..
-make -j3
+make -$MULTICORE
 cd ../App
 mkdir -p build
 cd build
