@@ -100,9 +100,9 @@ pwd
 wget https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz -o boost_1_72_0.tar.gz
 tar xvf boost_1_72_0.tar.gz 
 cd boost_1_72_0/
-#./bootstrap.sh
-#./b2
-#sudo ./b2 install
+./bootstrap.sh
+./b2
+sudo ./b2 install
 ###############Install OpenSiv3D##########################
 cd ~
 cd $BUILDDIR
