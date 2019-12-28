@@ -16,7 +16,7 @@ libpng-dev libjpeg-turbo8-dev libgif-dev libwebp-dev \
 libfreetype6-dev libharfbuzz-dev libharfbuzz-bin libopenal-dev \
 libopenal-data libogg-dev libvorbis-dev libboost1.65-dev \
 libglib2.0-dev libudev-dev libc6 libavcodec-dev libavformat-dev\
-libavutil-dev libswresample-dev libturbojpeg0-dev
+libavutil-dev libswresample-dev libturbojpeg0-dev libglew-dev
 
 ##########################################################
 cd ~
@@ -96,6 +96,13 @@ cmake ..
 make -j4
 sudo make install 
 pwd
+################Install Boost C++ Library###########################
+wget https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz -o boost_1_72_0.tar.gz
+tar xvf boost_1_72_0.tar.gz 
+cd boost_1_72_0/
+#./bootstrap.sh
+#./b2
+#sudo ./b2 install
 ###############Install OpenSiv3D##########################
 cd ~
 cd $BUILDDIR
@@ -106,8 +113,14 @@ cd Linux
 mkdir -p build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles" ..
-make -$MULTICORE
+make -j $MULTICORE
+# run test app
 cd ../App
 mkdir -p build
 cd build
 cmake ..
+cp -r ../resources/ .
+cp -r ../../build/libSiv3D.a .
+mkdir ../../Debug -p
+cp -r ../../build/libSiv3D.a ../../Debug/
+make
