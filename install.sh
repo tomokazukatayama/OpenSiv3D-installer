@@ -123,4 +123,4 @@ cp -r ../resources/ .
 cp -r ../../build/libSiv3D.a .
 mkdir ../../Debug -p
 cp -r ../../build/libSiv3D.a ../../Debug/
-make
+make CXXFLAGS=-lopencv_imgproc
